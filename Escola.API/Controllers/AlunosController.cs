@@ -47,7 +47,7 @@ namespace Escola.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<AlunoDTO> Get()
+        public ActionResult<AlunoDTO> Get() 
         {
             try
             {   
@@ -63,7 +63,7 @@ namespace Escola.API.Controllers
 
 
         [HttpGet]
-        [Route("/{id}")]
+        [Route("{id}")]
         public IActionResult GetComId([FromRoute] int id)
         {
             try
@@ -94,7 +94,7 @@ namespace Escola.API.Controllers
 
 
         [HttpPut]
-        [Route("/{id}")]
+        [Route("{id}")]
         public IActionResult AtualizaAluno([FromBody] AlunoDTO alunoDTO, [FromRoute] int id)
         {
             try
@@ -119,7 +119,7 @@ namespace Escola.API.Controllers
         }
 
         [HttpDelete]
-        [Route("/{id}")]
+        [Route("{id}")]
         public IActionResult Delete(int id)
         {
 
