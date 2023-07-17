@@ -8,6 +8,8 @@ namespace Escola.API.DataBase
         public virtual DbSet<Aluno> Alunos { get; set; }
 
         public virtual DbSet<Turma> Turmas { get; set; }
+        public virtual DbSet<AlunoTurma> AlunoTurma { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -86,6 +88,47 @@ namespace Escola.API.DataBase
 
             modelBuilder.Entity<Turma>().HasIndex(x => x.Nome)
                                         .IsUnique();
+
+            modelBuilder.Entity<AlunoTurma>().ToTable("ALUNO_X_TURMA");
+            modelBuilder.Entity<AlunoTurma>().Property(x => x.AlunoID)
+                    .HasColumnType("int")
+                    .HasColumnName("Aluno_Id");
+
+            modelBuilder.Entity<AlunoTurma>().Property(x => x.TurmaId)
+                                             .HasColumnType("int")
+                                             .HasColumnName("Turma_Id");
+
+            modelBuilder.Entity<Aluno>().HasMany(x => x.Turmas)
+                                        .WithMany(x => x.Alunos)
+                                        .UsingEntity<AlunoTurma>(
+                                                    t => t.HasOne<Turma>(x => x.Turma).WithMany().HasForeignKey(x => x.TurmaId),
+                                                    a => a.HasOne<Aluno>(x => x.Aluno).WithMany().HasForeignKey(x => x.AlunoID)
+                                                    );
+
+            modelBuilder.Entity<Boletim>().ToTable("BOLETIM")
+                                          .HasKey(x => x.Id);
+
+            modelBuilder.Entity<Boletim>().Property(x => x.AlunoId)
+                                          .HasColumnType("int")
+                                          .IsRequired()
+                                          .HasColumnName("Aluno_Id");
+
+            modelBuilder.Entity<Boletim>().Property(x => x.Data_Pedido)
+                                          .HasColumnType("Data")
+                                          .IsRequired()
+                                          .HasColumnName("Data");
+
+            modelBuilder.Entity<Boletim>().HasOne(x => x.Aluno)
+                                          .WithMany(x => x.Boletims)
+                                          .HasForeignKey(x => x.AlunoId);
+
+            modelBuilder.Entity<Boletim>().HasMany(x => x.NotasMaterias)
+                                          .WithOne(x => x.Boletim)
+                                          .HasForeignKey(x => x.BoletimId);
+
+            modelBuilder.Entity<NotasMateria>().HasOne(x => x.Materia)
+                                               .WithMany(x => x.NotasMaterias)
+                                               .HasForeignKey(x=> x.MateriaId);
 
         }
     }
