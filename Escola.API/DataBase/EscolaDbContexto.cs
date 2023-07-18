@@ -9,6 +9,10 @@ namespace Escola.API.DataBase
 
         public virtual DbSet<Turma> Turmas { get; set; }
         public virtual DbSet<AlunoTurma> AlunoTurma { get; set; }
+        public virtual DbSet<Materia> Materia { get; set; }
+        public virtual DbSet<Boletim> Boletims { get; set; }
+        public virtual DbSet<NotasMateria> NotasMaterias { get; set; }
+
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -114,9 +118,9 @@ namespace Escola.API.DataBase
                                           .HasColumnName("Aluno_Id");
 
             modelBuilder.Entity<Boletim>().Property(x => x.Data_Pedido)
-                                          .HasColumnType("Data")
+                                          .HasColumnType("datetime2")
                                           .IsRequired()
-                                          .HasColumnName("Data");
+                                          .HasColumnName("Data_Consulta");
 
             modelBuilder.Entity<Boletim>().HasOne(x => x.Aluno)
                                           .WithMany(x => x.Boletims)
@@ -129,6 +133,14 @@ namespace Escola.API.DataBase
             modelBuilder.Entity<NotasMateria>().HasOne(x => x.Materia)
                                                .WithMany(x => x.NotasMaterias)
                                                .HasForeignKey(x=> x.MateriaId);
+
+            modelBuilder.Entity<Materia>().ToTable("MATÉRIA").HasKey(X => X.Id);
+
+            modelBuilder.Entity<Materia>().Property(x => x.NomeMateria)
+                                          .IsRequired()
+                                          .HasColumnType("varchar")
+                                          .HasColumnName("Nome_Materia")
+                                          .HasMaxLength(200);
 
         }
     }

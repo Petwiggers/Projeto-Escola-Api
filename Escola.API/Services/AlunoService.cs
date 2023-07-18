@@ -46,7 +46,6 @@ namespace Escola.API.Services
             if (alunoDB == null) throw new NotFoundException("Aluno não encontrado");
 
             alunoDB.Update(aluno);
-           //
             return alunoDB;
         }
 
