@@ -8,5 +8,7 @@ namespace Escola.API.Interfaces.Repositories
 {
     public interface IBoletimRepository : IBaseRepository<Boletim, int>
     {
+        public List<Boletim> ObterBoletinsIdAluno(int id);
     }
+    
 }

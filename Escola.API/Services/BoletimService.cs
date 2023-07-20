@@ -18,12 +18,12 @@ namespace Escola.API.Services
             _repository = repository;
             _alunoRepository = alunoRepository;
         }
-        Boletim IBoletimService.Atualizar(Boletim boletim)
+        public Boletim Atualizar(Boletim boletim)
         {
             throw new NotImplementedException();
         }
 
-        Boletim IBoletimService.Criar(Boletim boletim)
+        public Boletim Criar(Boletim boletim)
         {
             Aluno alunoexist = _alunoRepository.ObterPorId(boletim.AlunoId);
             if(alunoexist == null)
@@ -34,19 +34,30 @@ namespace Escola.API.Services
             return boletim;
         }
 
-        void IBoletimService.DeletarBoletim(int id)
+        public void DeletarBoletim(int id)
         {
             throw new NotImplementedException();
         }
 
-        List<Boletim> IBoletimService.ObterBoletim()
+        public List<Boletim> ObterBoletimIdAluno(int id)
         {
-            throw new NotImplementedException();
+            List<Boletim> boletims= _repository.ObterBoletinsIdAluno(id);
+            if (boletims == null)
+            {
+                throw new NotFoundException("Não há boletins cadastradas para este Aluno !");
+            }
+            return boletims;
         }
+        public Boletim ObterPorId(int id)
+        {
+            Boletim boletim = _repository.ObterPorId(id);
+            if (boletim == null)
+            {
+                throw new NotFoundException("Não foi possivel encontrar um Boletim com o id :" + id);
+            }
+            return boletim;
+        }
+      
 
-        Boletim IBoletimService.ObterPorId(int id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -39,5 +39,40 @@ namespace Escola.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        [HttpGet("{id}")]
+        public ActionResult<List<Boletim>> ObterBoletimIdAluno([FromRoute] int id)
+        {
+            try
+            {
+                Boletim boletin = _services.ObterPorId(id);
+                return Ok(new BoletimDTO(boletin));
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("aluno/{id}")]
+        public ActionResult<List<Boletim>> ObterBoletimId([FromRoute] int id)
+        {
+            try
+            {
+                Boletim boletin = _services.ObterPorId(id);
+                return Ok(new BoletimDTO(boletin));
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }
