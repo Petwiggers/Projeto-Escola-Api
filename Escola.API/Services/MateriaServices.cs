@@ -21,7 +21,14 @@ namespace Escola.API.Services
 
         public Materia Atualizar(Materia materia)
         {
-            throw new NotImplementedException();
+            Materia materiaDb = _repository.ObterPorId(materia.Id);
+            if(materiaDb == null)
+            {
+                throw new NotFoundException("Matéria não existe !");
+            }
+            materiaDb.Update(materia);
+            return _repository.Atualizar(materiaDb);
+            
         }
 
         public Materia Criar(Materia materia)
@@ -40,7 +47,7 @@ namespace Escola.API.Services
             Materia materia = _repository.ObterPorId(id);
             if(materia == null)
             {
-                throw new NotFoundException("Não possui um regidtro com este Id !");
+                throw new NotFoundException("Não possui um registro com este Id !");
             }
             _repository.Excluir(materia);
         }
@@ -54,6 +61,7 @@ namespace Escola.API.Services
             }
             return materias; 
         }
+
         public Materia ObterPorNome(String nome)
         {
             Materia materia = _repository.ObterPorNome(nome);
@@ -63,6 +71,7 @@ namespace Escola.API.Services
             }
             return materia;
         }
+
         public Materia ObterPorId(int id)
         {
             Materia materia = _repository.ObterPorId(id);
@@ -72,5 +81,6 @@ namespace Escola.API.Services
             }
             return materia;
         }
+
     }
 }

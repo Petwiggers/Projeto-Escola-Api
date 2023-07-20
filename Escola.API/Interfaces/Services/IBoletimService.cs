@@ -1,4 +1,5 @@
-﻿using Escola.API.Model;
+﻿using Escola.API.Interfaces.Repositories;
+using Escola.API.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,10 @@ namespace Escola.API.Interfaces.Services
 {
     public interface IBoletimService 
     {
+        public Boletim Criar(Boletim boletim);
         public Boletim ObterPorId(int id);
-        public List<Boletim> ObterAluno();
+        public Boletim Atualizar(Boletim boletim);
+        public List<Boletim> ObterBoletim();
+        public void DeletarBoletim(int id);
     }
 }

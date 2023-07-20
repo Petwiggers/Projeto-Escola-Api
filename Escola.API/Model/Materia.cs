@@ -22,5 +22,10 @@ namespace Escola.API.Model
             Id = materiaDTO.Id;
             NomeMateria = materiaDTO.NomeMateria;
         }
+
+        public void Update (Materia materia)
+        {
+            NomeMateria = materia.NomeMateria;
+        }
     }
 }

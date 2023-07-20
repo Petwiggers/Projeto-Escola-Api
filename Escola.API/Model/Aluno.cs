@@ -49,7 +49,6 @@ namespace Escola.API.Model
             Telefone = aluno.Telefone;
             Email = aluno.Email;
             DataNascimento = aluno.DataNascimento;
-
         }
     }
 }

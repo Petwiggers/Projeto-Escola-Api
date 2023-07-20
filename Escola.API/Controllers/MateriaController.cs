@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Escola.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class MateriaController : ControllerBase
     {
@@ -98,7 +98,26 @@ namespace Escola.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
+        [HttpPut("{id}")]
+        public ActionResult<Materia> AtualizarMateria([FromBody] MateriaDTO materiaDTO, [FromRoute] int id)
+        {
+            try
+            {
+                Materia materia = new Materia(materiaDTO);
+                materia.Id = id;
+                var resultado = _services.Atualizar(materia);
+                return Ok(new MateriaDTO(resultado));
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+       
+        }
       
     }
 }
