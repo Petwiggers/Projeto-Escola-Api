@@ -48,12 +48,19 @@ namespace Escola.API.Services
 
         public void DeletarBoletim(int id)
         {
-            throw new NotImplementedException();
+            Boletim boletim = _repository.ObterPorId(id);
+
+            if (boletim == null)
+            {
+                throw new NotFoundException("Boletim não encontrado");
+            }
+
+            _repository.Excluir(boletim);
         }
 
         public List<Boletim> ObterBoletimIdAluno(int id)
         {
-            List<Boletim> boletims= _repository.ObterBoletinsIdAluno(id);
+            List<Boletim> boletims = _repository.ObterBoletinsIdAluno(id);
             if (boletims == null)
             {
                 throw new NotFoundException("Não há boletins cadastradas para este Aluno !");

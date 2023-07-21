@@ -62,8 +62,8 @@ namespace Escola.API.Controllers
         {
             try
             {
-                Boletim boletin = _services.ObterPorId(id);
-                return Ok(new BoletimDTO(boletin));
+                List<Boletim> boletin = _services.ObterBoletimIdAluno(id);
+                return Ok(boletin.Select(x => new BoletimDTO(x)).ToList());
             }
             catch (NotFoundException ex)
             {
@@ -112,6 +112,20 @@ namespace Escola.API.Controllers
 
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }   
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult Deletar([FromRoute] int id)
+        {
+            try
+            {
+                _services.DeletarBoletim(id);
+                return Ok("O registro foi deletado !");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
     }
 }
