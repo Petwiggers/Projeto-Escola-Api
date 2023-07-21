@@ -14,5 +14,7 @@ namespace Escola.API.Interfaces.Services
         public Boletim Atualizar(Boletim boletim);
         public void DeletarBoletim(int id);
         public List<Boletim> ObterBoletimIdAluno(int id);
+
+        public List<Boletim> ObterTodos();
     }
 }

@@ -20,7 +20,19 @@ namespace Escola.API.Services
         }
         public Boletim Atualizar(Boletim boletim)
         {
-            throw new NotImplementedException();
+            Aluno alunoexist = _alunoRepository.ObterPorId(boletim.AlunoId);
+            Boletim boletimDB = _repository.ObterPorId(boletim.Id);
+            if (alunoexist == null)
+            {
+                throw new NotFoundException("Não existe um Aluno com este Id !");
+            }
+            if(boletimDB == null)
+            {
+                throw new NotFoundException("Boletim não existe !");
+            }
+            boletimDB.Update(boletim);
+            _repository.Atualizar(boletimDB);
+            return boletimDB;
         }
 
         public Boletim Criar(Boletim boletim)
@@ -57,7 +69,16 @@ namespace Escola.API.Services
             }
             return boletim;
         }
-      
+        public List<Boletim> ObterTodos()
+        {
+            List<Boletim> boletins = _repository.ObterTodos();
+            if(boletins == null)
+            {
+                throw new NotFoundException("Não há nenhum boletim cadastrado");
+            }
+            return boletins;
+        }
+
 
     }
 }

@@ -32,5 +32,11 @@ namespace Escola.API.Model
                 throw new ArgumentException("Erro ao converter a data !");
             }
         }
+
+        public void Update(Boletim boletim)
+        {
+            AlunoId = boletim.AlunoId;
+            Data_Pedido = boletim.Data_Pedido;
+        }
     }
 }

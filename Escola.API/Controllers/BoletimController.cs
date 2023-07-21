@@ -74,5 +74,44 @@ namespace Escola.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet]
+        public ActionResult<List<MateriaDTO>> ObterBoletins()
+        {
+            try
+            {
+                List<Boletim> boletins = _services.ObterTodos();
+                List<BoletimDTO> materiaDTOs = boletins.Select(x => new BoletimDTO(x)).ToList();
+                return Ok(materiaDTOs);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPut ("{id}")]
+        public ActionResult<Boletim> AtualizarBoletim([FromBody] BoletimDTO boletimDTO, [FromRoute]int id)
+        {
+            try
+            {
+                Boletim boletim = new Boletim(boletimDTO);
+                boletim.Id = id;
+                return Ok(new BoletimDTO(_services.Atualizar(boletim)));
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }   
+        }
     }
 }
