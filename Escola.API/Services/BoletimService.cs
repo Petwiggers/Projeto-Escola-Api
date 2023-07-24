@@ -85,7 +85,5 @@ namespace Escola.API.Services
             }
             return boletins;
         }
-
-
     }
 }

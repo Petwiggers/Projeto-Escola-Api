@@ -142,6 +142,8 @@ namespace Escola.API.DataBase
                                           .HasColumnName("Nome_Materia")
                                           .HasMaxLength(200);
 
+            modelBuilder.Entity<NotasMateria>().ToTable("NOTAS_MATERIAS").HasKey(x => x.Id);
+
         }
     }
 }

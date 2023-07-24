@@ -13,22 +13,22 @@ namespace Escola.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class BoletimController : ControllerBase
+    public class NotasMateriasController : ControllerBase
     {
-        public IBoletimService _services;
-        public BoletimController(IBoletimService service)
+        public INotasMateriasService _services;
+        public NotasMateriasController(INotasMateriasService service)
         {
             _services = service;
         }
-
+        
         [HttpPost]
-        public ActionResult<BoletimDTO> Cadastrar([FromBody] BoletimDTO boletimDTO)
+        public ActionResult<NotasMateriasDTO> Cadastrar([FromBody] NotasMateriasDTO notasMateriasDTO)
         {
             try
             {
-                Boletim boletim = new Boletim(boletimDTO);
-                var resultado = _services.Criar(boletim);
-                return Ok(new BoletimDTO(resultado));
+                NotasMateria notaMateria = new (notasMateriasDTO);
+                var resultado = _services.Criar(notaMateria);
+                return Ok(new NotasMateriasDTO(resultado));
             }
             catch (RegistroDuplicadoException ex)
             {
@@ -39,13 +39,13 @@ namespace Escola.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        [HttpGet("{id}")]
-        public ActionResult<List<BoletimDTO>> ObterBoletimIdAluno([FromRoute] int id)
+        [HttpGet("aluno/{idAluno}/boletim/{idBoletim}")]
+        public ActionResult<List<NotasMateriasDTO>> ObterPorBoletim([FromRoute] int idAluno, int idBoletim)
         {
             try
             {
-                Boletim boletin = _services.ObterPorId(id);
-                return Ok(new BoletimDTO(boletin));
+                IQueryable<NotasMateria> notaMateria = _services.ObterPorBoletim(idAluno , idBoletim);
+                return Ok(notaMateria.Select(x=> new NotasMateriasDTO (x)));
             }
             catch (NotFoundException ex)
             {
@@ -57,13 +57,13 @@ namespace Escola.API.Controllers
             }
         }
 
-        [HttpGet("aluno/{id}")]
-        public ActionResult<List<Boletim>> ObterBoletimId([FromRoute] int id)
+        [HttpGet("{id}")]
+        public ActionResult<NotasMateriasDTO> ObterNotasMateriasId([FromRoute] int id)
         {
             try
             {
-                List<Boletim> boletin = _services.ObterBoletimIdAluno(id);
-                return Ok(boletin.Select(x => new BoletimDTO(x)).ToList());
+                NotasMateria notasMateria= _services.ObterPorId(id);
+                return Ok(new NotasMateriasDTO (notasMateria));
             }
             catch (NotFoundException ex)
             {
@@ -76,13 +76,13 @@ namespace Escola.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<MateriaDTO>> ObterBoletins()
+        public ActionResult<List<NotasMateriasDTO>> ObterNotasMaterias()
         {
             try
             {
-                List<Boletim> boletins = _services.ObterTodos();
-                List<BoletimDTO> materiaDTOs = boletins.Select(x => new BoletimDTO(x)).ToList();
-                return Ok(materiaDTOs);
+                List<NotasMateria> notasMaterias = _services.ObterTodos();
+                List<NotasMateriasDTO> notasMateriasDTOs = notasMaterias.Select(x => new NotasMateriasDTO(x)).ToList();
+                return Ok(notasMateriasDTOs);
             }
             catch (NotFoundException ex)
             {
@@ -94,14 +94,14 @@ namespace Escola.API.Controllers
             }
         }
 
-        [HttpPut ("{id}")]
-        public ActionResult<Boletim> AtualizarBoletim([FromBody] BoletimDTO boletimDTO, [FromRoute]int id)
+        [HttpPut("{id}")]
+        public ActionResult<NotasMateriasDTO> AtualizarNotaMateria([FromBody] NotasMateriasDTO notasMateriasDTO, [FromRoute] int id)
         {
             try
             {
-                Boletim boletim = new Boletim(boletimDTO);
-                boletim.Id = id;
-                return Ok(new BoletimDTO(_services.Atualizar(boletim)));
+                NotasMateria notasMateria = new(notasMateriasDTO);
+                notasMateria.Id = id;
+                return Ok(new NotasMateriasDTO(_services.Atualizar(notasMateria)));
             }
             catch (NotFoundException ex)
             {
@@ -109,9 +109,8 @@ namespace Escola.API.Controllers
             }
             catch (Exception ex)
             {
-
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }   
+            }
         }
 
         [HttpDelete("{id}")]

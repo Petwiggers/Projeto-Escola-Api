@@ -36,7 +36,8 @@ namespace Escola.API
             //Services
             services.AddScoped<IAlunoService,AlunoService>();
             services.AddScoped<IMateriaService, MateriaServices>();
-            services.AddScoped<IBoletimService, BoletimService>(); 
+            services.AddScoped<IBoletimService, BoletimService>();
+            services.AddScoped<INotasMateriasService, NotasMateriasService>();
 
             //Repositórios
             services.AddDbContext<EscolaDbContexto>();
@@ -44,7 +45,7 @@ namespace Escola.API
             services.AddScoped<ITurmaRepository, TurmaRepository>();
             services.AddScoped<IBoletimRepository, BoletimRepository>();
             services.AddScoped<IMateriaRepository, MateriaRepository>();
-
+            services.AddScoped<INotasMateriasRepository, NotasMateriasRepository>();
 
             //Cache
             services.AddMemoryCache();
