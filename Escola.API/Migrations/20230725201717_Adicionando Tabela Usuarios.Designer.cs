@@ -4,14 +4,16 @@ using Escola.API.DataBase;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Escola.API.Migrations
 {
     [DbContext(typeof(EscolaDbContexto))]
-    partial class EscolaDbContextoModelSnapshot : ModelSnapshot
+    [Migration("20230725201717_Adicionando Tabela Usuarios")]
+    partial class AdicionandoTabelaUsuarios
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -181,10 +183,10 @@ namespace Escola.API.Migrations
 
             modelBuilder.Entity("Escola.API.Model.Usuario", b =>
                 {
-                    b.Property<string>("Login")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
-                        .HasColumnName("NOME_USUARIO");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("NomeCompleto")
                         .IsRequired()
@@ -192,16 +194,22 @@ namespace Escola.API.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("NOME_COMPLETO");
 
+                    b.Property<string>("NomeUsuario")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("NOME_USUARIO");
+
                     b.Property<string>("Senha")
                         .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("varchar(300)")
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
                         .HasColumnName("SENHA");
 
                     b.Property<int>("TipoAcesso")
                         .HasColumnType("int");
 
-                    b.HasKey("Login");
+                    b.HasKey("Id");
 
                     b.ToTable("USUÁRIOS");
                 });

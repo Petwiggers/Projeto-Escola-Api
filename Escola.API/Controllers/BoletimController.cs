@@ -122,6 +122,10 @@ namespace Escola.API.Controllers
                 _services.DeletarBoletim(id);
                 return Ok("O registro foi deletado !");
             }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
