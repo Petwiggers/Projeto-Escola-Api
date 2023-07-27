@@ -2,6 +2,7 @@
 using Escola.API.Exceptions;
 using Escola.API.Interfaces.Services;
 using Escola.API.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 namespace Escola.API.Controllers
 {
     [Route("[controller]")]
+    [Authorize]
     [ApiController]
     public class BoletimController : ControllerBase
     {

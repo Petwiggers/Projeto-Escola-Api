@@ -22,7 +22,7 @@ namespace Escola.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult Logar(LoginDTO login)
+        public ActionResult Logar([FromBody]LoginDTO login)
         {
             try
             {

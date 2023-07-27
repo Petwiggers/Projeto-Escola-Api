@@ -2,6 +2,7 @@
 using Escola.API.Exceptions;
 using Escola.API.Interfaces.Services;
 using Escola.API.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -12,6 +13,7 @@ using System.Linq;
 namespace Escola.API.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("[controller]")]
     public class AlunosController : ControllerBase
     {

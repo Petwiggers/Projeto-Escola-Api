@@ -3,6 +3,7 @@ using Escola.API.DataBase.Repositories;
 using Escola.API.Interfaces.Repositories;
 using Escola.API.Interfaces.Services;
 using Escola.API.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
@@ -35,6 +37,22 @@ namespace Escola.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            var jwtChave = Configuration.GetSection("jwtTokenChave").Get<string>();
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwtChave)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
 
             //Services
             services.AddScoped<IAlunoService,AlunoService>();
@@ -75,7 +93,6 @@ namespace Escola.API
                 config.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
                 config.InputFormatters.Add(new XmlDataContractSerializerInputFormatter(config));
             });
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -92,7 +109,9 @@ namespace Escola.API
 
             app.UseRouting();
 
+            //Configurando Api para utilizar Autenticações e Autorizações no Sistema
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {
