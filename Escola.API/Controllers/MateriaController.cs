@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 namespace Escola.API.Controllers
 {
     [Route("[controller]")]
-    [Authorize]
     [ApiController]
     public class MateriaController : ControllerBase
     {
@@ -26,99 +25,53 @@ namespace Escola.API.Controllers
             _services = service;
         }
 
+        [Authorize(Roles = "professor, alunos")]
         [HttpGet]
         public ActionResult<List<MateriaDTO>> ObterMateria([FromQuery] string nome)
         {
-            try
+            if (nome != null)
             {
-                if (nome != null)
-                {
-                    Materia materia = _services.ObterPorNome(nome);
-                    return Ok(new MateriaDTO(materia));
-                }
-                List<Materia> materias = _services.ObterMaterias();
-                List<MateriaDTO> materiasDTO = materias.Select(x => new MateriaDTO(x)).ToList();
-                return Ok(materiasDTO);
+                Materia materia = _services.ObterPorNome(nome);
+                return Ok(new MateriaDTO(materia));
             }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            List<Materia> materias = _services.ObterMaterias();
+            List<MateriaDTO> materiasDTO = materias.Select(x => new MateriaDTO(x)).ToList();
+            return Ok(materiasDTO); 
         }
 
+        [Authorize(Roles = "professor, alunos")]
         [HttpGet("{id}")]
         public ActionResult<Materia> ObterPorId([FromRoute] int id)
         {
-            try
-            {
-                Materia materia = _services.ObterPorId(id);
-                return Ok(new MateriaDTO(materia));
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            Materia materia = _services.ObterPorId(id);
+            return Ok(new MateriaDTO(materia));
         }
 
+        [Authorize(Roles = "professor")]
         [HttpDelete("{id}")]
         public ActionResult<Materia>Deletar([FromRoute] int id)
         {
-            try
-            {
-                _services.DeletarMateria(id);
-                return Ok("O registro foi deletado !");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            _services.DeletarMateria(id);
+            return Ok("O registro foi deletado !");
         }
 
+        [Authorize(Roles = "professor")]
         [HttpPost]
         public ActionResult<MateriaDTO> Cadastrar ([FromBody]MateriaDTO materiaDTO)
         {
-            try
-            {
-                Materia materia = new Materia(materiaDTO);
-                var resultado = _services.Criar(materia);
-                return Ok(new MateriaDTO(resultado));
-            }
-            catch(RegistroDuplicadoException ex)
-            {
-                return BadRequest(ex.Message);                                                       
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            Materia materia = new Materia(materiaDTO);
+            var resultado = _services.Criar(materia);
+            return Ok(new MateriaDTO(resultado));
         }
+
+        [Authorize(Roles = "professor")]
         [HttpPut("{id}")]
         public ActionResult<Materia> AtualizarMateria([FromBody] MateriaDTO materiaDTO, [FromRoute] int id)
         {
-            try
-            {
-                Materia materia = new Materia(materiaDTO);
-                materia.Id = id;
-                var resultado = _services.Atualizar(materia);
-                return Ok(new MateriaDTO(resultado));
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-       
+            Materia materia = new Materia(materiaDTO);
+            materia.Id = id;
+            var resultado = _services.Atualizar(materia);
+            return Ok(new MateriaDTO(resultado));
         }
       
     }

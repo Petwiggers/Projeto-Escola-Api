@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 namespace Escola.API.Controllers
 {
     [Route("[controller]")]
-    [Authorize]
     [ApiController]
     public class NotasMateriasController : ControllerBase
     {
@@ -22,111 +21,56 @@ namespace Escola.API.Controllers
         {
             _services = service;
         }
-        
+
+        [Authorize(Roles = "professor")]
         [HttpPost]
         public ActionResult<NotasMateriasDTO> Cadastrar([FromBody] NotasMateriasDTO notasMateriasDTO)
         {
-            try
-            {
-                NotasMateria notaMateria = new (notasMateriasDTO);
-                var resultado = _services.Criar(notaMateria);
-                return Ok(new NotasMateriasDTO(resultado));
-            }
-            catch (RegistroDuplicadoException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            NotasMateria notaMateria = new (notasMateriasDTO);
+            var resultado = _services.Criar(notaMateria);
+            return Ok(new NotasMateriasDTO(resultado));
         }
+
+        [Authorize(Roles = "professor, alunos")]
         [HttpGet("aluno/{idAluno}/boletim/{idBoletim}")]
         public ActionResult<List<NotasMateriasDTO>> ObterPorBoletim([FromRoute] int idAluno, int idBoletim)
         {
-            try
-            {
-                IQueryable<NotasMateria> notaMateria = _services.ObterPorBoletim(idAluno , idBoletim);
-                return Ok(notaMateria.Select(x=> new NotasMateriasDTO (x)));
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            IQueryable<NotasMateria> notaMateria = _services.ObterPorBoletim(idAluno , idBoletim);
+            return Ok(notaMateria.Select(x=> new NotasMateriasDTO (x)));
         }
 
+        [Authorize(Roles = "professor, alunos")]
         [HttpGet("{id}")]
         public ActionResult<NotasMateriasDTO> ObterNotasMateriasId([FromRoute] int id)
         {
-            try
-            {
-                NotasMateria notasMateria= _services.ObterPorId(id);
-                return Ok(new NotasMateriasDTO (notasMateria));
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            NotasMateria notasMateria= _services.ObterPorId(id);
+            return Ok(new NotasMateriasDTO (notasMateria));
         }
 
+        [Authorize(Roles = "professor, alunos")]
         [HttpGet]
         public ActionResult<List<NotasMateriasDTO>> ObterNotasMaterias()
         {
-            try
-            {
-                List<NotasMateria> notasMaterias = _services.ObterTodos();
-                List<NotasMateriasDTO> notasMateriasDTOs = notasMaterias.Select(x => new NotasMateriasDTO(x)).ToList();
-                return Ok(notasMateriasDTOs);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            List<NotasMateria> notasMaterias = _services.ObterTodos();
+            List<NotasMateriasDTO> notasMateriasDTOs = notasMaterias.Select(x => new NotasMateriasDTO(x)).ToList();
+            return Ok(notasMateriasDTOs);
         }
 
+        [Authorize(Roles = "professor")]
         [HttpPut("{id}")]
         public ActionResult<NotasMateriasDTO> AtualizarNotaMateria([FromBody] NotasMateriasDTO notasMateriasDTO, [FromRoute] int id)
         {
-            try
-            {
-                NotasMateria notasMateria = new(notasMateriasDTO);
-                notasMateria.Id = id;
-                return Ok(new NotasMateriasDTO(_services.Atualizar(notasMateria)));
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            NotasMateria notasMateria = new(notasMateriasDTO);
+            notasMateria.Id = id;
+            return Ok(new NotasMateriasDTO(_services.Atualizar(notasMateria)));
         }
 
+        [Authorize(Roles = "professor")]
         [HttpDelete("{id}")]
         public ActionResult Deletar([FromRoute] int id)
         {
-            try
-            {
-                _services.DeletarBoletim(id);
-                return Ok("O registro foi deletado !");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            _services.DeletarBoletim(id);
+            return Ok("O registro foi deletado !");
         }
     }
 }

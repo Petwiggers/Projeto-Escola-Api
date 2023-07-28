@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 namespace Escola.API.Controllers
 {
     [Route("[controller]")]
-    [Authorize]
     [ApiController]
     public class BoletimController : ControllerBase
     {
@@ -23,115 +22,54 @@ namespace Escola.API.Controllers
             _services = service;
         }
 
+        [Authorize(Roles = "professor")]
         [HttpPost]
         public ActionResult<BoletimDTO> Cadastrar([FromBody] BoletimDTO boletimDTO)
         {
-            try
-            {
-                Boletim boletim = new Boletim(boletimDTO);
-                var resultado = _services.Criar(boletim);
-                return Ok(new BoletimDTO(resultado));
-            }
-            catch (RegistroDuplicadoException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            Boletim boletim = new Boletim(boletimDTO);
+            var resultado = _services.Criar(boletim);
+            return Ok(new BoletimDTO(resultado));  
         }
+
+        [Authorize(Roles = "professor, alunos")]
         [HttpGet("{id}")]
         public ActionResult<List<BoletimDTO>> ObterBoletimIdAluno([FromRoute] int id)
         {
-            try
-            {
                 Boletim boletin = _services.ObterPorId(id);
                 return Ok(new BoletimDTO(boletin));
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
         }
-
+        [Authorize(Roles = "professor, alunos")]
         [HttpGet("aluno/{id}")]
         public ActionResult<List<Boletim>> ObterBoletimId([FromRoute] int id)
         {
-            try
-            {
-                List<Boletim> boletin = _services.ObterBoletimIdAluno(id);
-                return Ok(boletin.Select(x => new BoletimDTO(x)).ToList());
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            List<Boletim> boletin = _services.ObterBoletimIdAluno(id);
+            return Ok(boletin.Select(x => new BoletimDTO(x)).ToList());
         }
 
+        [Authorize(Roles = "professor, alunos")]
         [HttpGet]
         public ActionResult<List<MateriaDTO>> ObterBoletins()
         {
-            try
-            {
-                List<Boletim> boletins = _services.ObterTodos();
-                List<BoletimDTO> materiaDTOs = boletins.Select(x => new BoletimDTO(x)).ToList();
-                return Ok(materiaDTOs);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            List<Boletim> boletins = _services.ObterTodos();
+            List<BoletimDTO> materiaDTOs = boletins.Select(x => new BoletimDTO(x)).ToList();
+            return Ok(materiaDTOs);
         }
 
+        [Authorize(Roles = "professor")]
         [HttpPut ("{id}")]
         public ActionResult<Boletim> AtualizarBoletim([FromBody] BoletimDTO boletimDTO, [FromRoute]int id)
         {
-            try
-            {
-                Boletim boletim = new Boletim(boletimDTO);
-                boletim.Id = id;
-                return Ok(new BoletimDTO(_services.Atualizar(boletim)));
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }   
+            Boletim boletim = new Boletim(boletimDTO);
+            boletim.Id = id;
+            return Ok(new BoletimDTO(_services.Atualizar(boletim)));
         }
 
+        [Authorize(Roles = "professor")]
         [HttpDelete("{id}")]
         public ActionResult Deletar([FromRoute] int id)
         {
-            try
-            {
-                _services.DeletarBoletim(id);
-                return Ok("O registro foi deletado !");
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            _services.DeletarBoletim(id);
+            return Ok("O registro foi deletado !");
         }
     }
 }

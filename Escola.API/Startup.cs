@@ -2,6 +2,7 @@ using Escola.API.DataBase;
 using Escola.API.DataBase.Repositories;
 using Escola.API.Interfaces.Repositories;
 using Escola.API.Interfaces.Services;
+using Escola.API.Middleware;
 using Escola.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -109,9 +110,12 @@ namespace Escola.API
 
             app.UseRouting();
 
+            //Adicionando error Middleware
+            app.UseMiddleware<ErrorsMiddleware>();
+
             //Configurando Api para utilizar Autenticações e Autorizações no Sistema
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

@@ -1,6 +1,7 @@
 ﻿using Escola.API.DTO;
 using Escola.API.Exceptions;
 using Escola.API.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 namespace Escola.API.Controllers
 {
     [Route("[controller]")]
+    [AllowAnonymous]
     [ApiController]
     public class LoginController : ControllerBase
     {
@@ -24,22 +26,10 @@ namespace Escola.API.Controllers
         [HttpPost]
         public ActionResult Logar([FromBody]LoginDTO login)
         {
-            try
-            {
-                if (!_services.Autenticar(login))
-                    return Unauthorized("Login ou Senha inválidos !");
+            if (!_services.Autenticar(login))
+                return Unauthorized("Login ou Senha inválidos !");
 
-                return Ok(_services.GerarToken(login));
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex )
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        
+            return Ok(_services.GerarToken(login));
         }
     }
 }
