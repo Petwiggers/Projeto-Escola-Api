@@ -26,9 +26,39 @@ namespace Escola.API.Test.Services
                 });
             var notasMateriasService = new NotasMateriasService(notasMateriasRepositoryMock.Object);
             var notasMaeterias = new NotasMateria() { Nota = -1 };
-            var mensagemEsperada = "Nota deve ser maior que 0";
+            var mensagemEsperada = "Nota deve ser menor ou igual a 10 e maior ou igual a 0";
             var parametroEsperado = "Nota";
             var valorAtualEsperado = -1;
+
+            // ACT
+
+            // ASSERT 
+            var ex = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                notasMateriasService.Criar(notasMaeterias);
+            });
+
+            Assert.AreEqual(parametroEsperado, ex.ParamName);
+            Assert.IsTrue(ex.Message.Contains(mensagemEsperada));
+            Assert.AreEqual(valorAtualEsperado, ex.ActualValue);
+        }
+
+        [Test]
+        public void Cadastrar_NotaMaiorQueDez_retunrError()
+        {
+            // ARRANGE
+            var notasMateriasRepositoryMock = new Mock<INotasMateriasRepository>();
+            notasMateriasRepositoryMock.Setup(x => x.Inserir(It.IsAny<NotasMateria>()))
+                .Returns<NotasMateria>(x =>
+                {
+                    x.Id = 10;
+                    return x;
+                });
+            var notasMateriasService = new NotasMateriasService(notasMateriasRepositoryMock.Object);
+            var notasMaeterias = new NotasMateria() { Nota = 12 };
+            var mensagemEsperada = "Nota deve ser menor ou igual a 10 e maior ou igual a 0";
+            var parametroEsperado = "Nota";
+            var valorAtualEsperado = 12;
 
             // ACT
 

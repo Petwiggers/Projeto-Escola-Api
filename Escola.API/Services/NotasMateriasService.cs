@@ -35,8 +35,8 @@ namespace Escola.API.Services
 
         public NotasMateria Criar(NotasMateria notasMateria)
         {
-            if (notasMateria.Nota < 0)
-                throw new ArgumentOutOfRangeException("Nota",notasMateria.Nota ,"Nota deve ser maior que 0");
+            if (notasMateria.Nota < 0 || notasMateria.Nota > 10)
+                throw new ArgumentOutOfRangeException("Nota",notasMateria.Nota , "Nota deve ser menor ou igual a 10 e maior ou igual a 0");
 
             if (!(_repository.ValidarBoletim(notasMateria.BoletimId) || _repository.ValidarMateria(notasMateria.MateriaId)))
             {
