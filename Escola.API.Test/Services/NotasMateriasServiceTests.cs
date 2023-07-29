@@ -2,6 +2,7 @@
 using Escola.API.Model;
 using Escola.API.Services;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -32,11 +33,11 @@ namespace Escola.API.Test.Services
 
             // ACT
 
-            // ASSERT 
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 notasMateriasService.Criar(notasMaeterias);
             });
+            // ASSERT 
 
             Assert.AreEqual(parametroEsperado, ex.ParamName);
             Assert.IsTrue(ex.Message.Contains(mensagemEsperada));
@@ -62,15 +63,48 @@ namespace Escola.API.Test.Services
 
             // ACT
 
-            // ASSERT 
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 notasMateriasService.Criar(notasMaeterias);
             });
+            // ASSERT 
 
             Assert.AreEqual(parametroEsperado, ex.ParamName);
             Assert.IsTrue(ex.Message.Contains(mensagemEsperada));
             Assert.AreEqual(valorAtualEsperado, ex.ActualValue);
+        }
+        [Test]
+        public void Cadastrar_NotasEntreZero_Dez_retunrOk()
+        {
+            // ARRANGE
+            var notasMateriasRepositoryMock = new Mock<INotasMateriasRepository>();
+            notasMateriasRepositoryMock.Setup(x => x.Inserir(It.IsAny<NotasMateria>()))
+                .Returns<NotasMateria>(x =>
+                {
+                    x.Id = 10;
+                    return x;
+                });
+            notasMateriasRepositoryMock.Setup(x => x.ValidarBoletim(It.IsAny<int>())).Returns(true);
+            notasMateriasRepositoryMock.Setup(x => x.ValidarMateria(It.IsAny<int>())).Returns(true);
+
+            var notasMateriasService = new NotasMateriasService(notasMateriasRepositoryMock.Object);
+
+            var notasMaterias = new NotasMateria() { Nota = 10 };
+            var notasMateriaEsperado = new NotasMateria() { 
+                Nota = 10 ,
+                Id = 10,
+                BoletimId = 0,
+                MateriaId = 0
+        };
+            
+            // ACT
+
+            var result = notasMateriasService.Criar(notasMaterias);
+
+            // ASSERT 
+
+            Assert.AreEqual(JsonConvert.SerializeObject(notasMateriaEsperado),
+                            JsonConvert.SerializeObject(result));
         }
     }
 }
